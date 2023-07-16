@@ -51,10 +51,6 @@ export class Guard {
     return !/\d{4}-\d{2}-\d{2}/.test(value);
   }
 
-  static isInvalidAccountNumber(value: string): boolean {
-    return /[^0-9.]+/.test(value);
-  }
-
   static isInvalidLevel(value: string): boolean {
     return !Object.values(UserLevel).includes(value as UserLevel);
   }

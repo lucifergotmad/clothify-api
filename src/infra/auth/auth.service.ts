@@ -21,9 +21,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userRepository.findOne({
-      $or: [{ username }, { email: username }],
-    });
+    const user = await this.userRepository.findOne({ username });
 
     if (user) {
       const passwordMatch = await this.utils.hash.compare(
@@ -42,7 +40,7 @@ export class AuthService {
   async login(body: AuthLoginRequestDTO) {
     try {
       const user = await this.userRepository.findOne({
-        $or: [{ username: body.username }, { email: body.username }],
+        username: body.username,
       });
 
       const { access_token, refresh_token } = await this.registerToken(user);
@@ -67,7 +65,7 @@ export class AuthService {
     const payload = { sub: user.username };
     const token = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: 86400,
+      expiresIn: this.envService.jwtLimit,
       secret: this.envService.jwtRefreshKey,
     });
 

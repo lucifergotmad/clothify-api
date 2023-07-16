@@ -25,9 +25,7 @@ export class EnvService {
     this._dbName = this.configService.get<string>(EnvKey.DB_NAME);
     this._dbUsername = this.configService.get<string>(EnvKey.DB_USERNAME);
     this._dbPassword = this.configService.get<string>(EnvKey.DB_PASSWORD);
-    this._jwtLimit = Number(
-      this.configService.get<number>(EnvKey.JWT_LIMIT) || 1200,
-    );
+    this._jwtLimit = Number(this.configService.get<number>(EnvKey.JWT_LIMIT));
   }
 
   get dbConnectionURI(): string {

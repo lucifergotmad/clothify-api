@@ -15,6 +15,7 @@ export class UserMongoMapper extends DbMapper<UserEntity, UserMongoEntity> {
       ...props,
       username: props.username,
       password: props.password.value,
+      level: props.level.value,
     };
     return mongoProps;
   }

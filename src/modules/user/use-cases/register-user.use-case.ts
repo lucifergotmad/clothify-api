@@ -29,20 +29,15 @@ export class RegisterUser
     try {
       await session.withTransaction(async () => {
         await this.userRepository.findOneAndThrow(
-          {
-            email: user.email,
-            username: user.username,
-          },
-          "Username or Email are already use",
+          { username: user.username },
+          "Username are already use",
         );
 
         const userEntity = await UserEntity.create({
+          fullname: user.fullname,
           password: user.password,
           username: user.username,
-          email: user.email,
-          weight: user.weight,
-          height: user.height,
-          age: user.age,
+          level: user.level,
         });
 
         result = await this.userRepository.save(userEntity);
@@ -52,7 +47,7 @@ export class RegisterUser
     } catch (err) {
       throw new ResponseException(err.message, err.status, err.trace);
     } finally {
-      await session.endSession();
+      session.endSession();
     }
   }
 }
