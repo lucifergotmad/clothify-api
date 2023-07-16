@@ -69,11 +69,6 @@ export class Encryptor {
     return str;
   }
 
-  writeLocal(nama: any, data: any) {
-    this.doEncrypt(data, ["kode_baki", "nama_baki", "kode_barang"]);
-    // return localStorage.setItem(nama, encryptascii(JSON.stringify(data)));
-  }
-
   doEncrypt(dataBeforeCopy: any, ignore: any = []) {
     if (!Number(process.env.ENCRYPTION_MODE)) {
       return dataBeforeCopy;
@@ -182,21 +177,6 @@ export class Encryptor {
       const data = this.decryptascii(dataBeforeCopy);
       return data;
     }
-  }
-
-  doDecryptMiddleware() {
-    return [
-      (req: any, res: any, next: any) => {
-        const isEnc = Number(req.headers.enc || "0");
-        const ignoreFields = JSON.parse(req.headers.ignore || "[]");
-        if (isEnc) {
-          req.body = this.doDecrypt(req.body, ignoreFields);
-          next();
-        } else {
-          next();
-        }
-      },
-    ];
   }
 
   maskingNumber(number: any) {
