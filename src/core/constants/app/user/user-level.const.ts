@@ -1,5 +1,5 @@
 export enum UserLevel {
-  Owner = "OWN",
-  Cashier = "CSR",
-  Admin = "ADM",
+  Owner = "Owner",
+  Cashier = "Cashier",
+  Admin = "Admin",
 }

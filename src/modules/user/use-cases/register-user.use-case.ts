@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/core/base-classes/infra/use-case.base";
 import { Utils } from "src/core/utils/utils.service";
 import { AuthRegisterRequestDTO } from "src/modules/app/controller/dtos/auth-register.dto";
@@ -9,6 +9,7 @@ import { UserEntity } from "../domain/user.entity";
 import { IUseCase } from "src/core/base-classes/interfaces/use-case.interface";
 import { ResponseException } from "src/core/exceptions/response.http-exception";
 import { IRepositoryResponse } from "src/core/ports/interfaces/repository-response.interface";
+import { UserLevel } from "src/core/constants/app/user/user-level.const";
 
 @Injectable()
 export class RegisterUser
@@ -28,9 +29,13 @@ export class RegisterUser
 
     try {
       await session.withTransaction(async () => {
+        if (user.level === UserLevel.Owner) {
+          throw new BadRequestException("Cannot create user with Level Owner!");
+        }
+
         await this.userRepository.findOneAndThrow(
           { username: user.username },
-          "Username are already use",
+          "Username are already use!",
         );
 
         const userEntity = await UserEntity.create({

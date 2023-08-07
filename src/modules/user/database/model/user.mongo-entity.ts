@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 import { BaseMongoEntity } from "src/core/base-classes/infra/mongo-entity.base";
 import { UserLevel } from "src/core/constants/app/user/user-level.const";
 
-@Schema({ collection: "tm_users" })
+@Schema({ collection: "users" })
 export class UserMongoEntity extends BaseMongoEntity<typeof UserMongoEntity> {
   @Prop({ required: true })
   fullname: string;

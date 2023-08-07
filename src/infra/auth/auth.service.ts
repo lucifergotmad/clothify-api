@@ -43,12 +43,13 @@ export class AuthService {
         username: body.username,
       });
 
-      const { access_token, refresh_token } = await this.registerToken(user);
+      const { accessToken, refreshToken } = await this.registerToken(user);
 
       return new AuthLoginResponseDTO({
-        accessToken: access_token,
-        refreshToken: refresh_token,
+        accessToken,
+        refreshToken,
         username: user.username,
+        level: user.level,
       });
     } catch (error) {
       throw new ResponseException(error.response, error.status, error.trace);
@@ -69,7 +70,7 @@ export class AuthService {
       secret: this.envService.jwtRefreshKey,
     });
 
-    return { access_token: token, refresh_token: refreshToken };
+    return { accessToken: token, refreshToken };
   }
 
   async refreshToken(body: AuthRefreshTokenRequestDTO) {
@@ -87,7 +88,8 @@ export class AuthService {
 
   private async _validateRefreshToken(body: AuthRefreshTokenRequestDTO) {
     const validToken = await this.utils.cache.get(body.refresh_token);
-    if (!validToken || body.username !== validToken)
+    if (!validToken || body.username !== validToken) {
       throw new ExceptionUnauthorize("Invalid Refresh Token.", this);
+    }
   }
 }

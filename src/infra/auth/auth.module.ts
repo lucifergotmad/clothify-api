@@ -17,7 +17,7 @@ import { JwtStrategy } from "./jwt.strategy";
       imports: [EnvModule],
       useFactory: (envService: EnvService) => ({
         secret: envService.jwtSecretKey,
-        signOptions: { expiresIn: 6000 },
+        signOptions: { expiresIn: envService.jwtLimit },
       }),
       inject: [EnvService],
     }),
