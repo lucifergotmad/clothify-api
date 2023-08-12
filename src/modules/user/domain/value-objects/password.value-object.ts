@@ -1,3 +1,4 @@
+import { UnprocessableEntityException } from "@nestjs/common";
 import { ValueObject } from "src/core/base-classes/domain/value-object";
 import { DomainPrimitive } from "src/core/base-classes/types/domain-primitive.type";
 import { Guard } from "src/core/logic/guard";
@@ -15,7 +16,7 @@ export class Password extends ValueObject<string> {
 
   protected validate({ value }: DomainPrimitive<string>) {
     if (Guard.isEmpty(value)) {
-      throw new Error("Password tidak boleh kosong!");
+      throw new UnprocessableEntityException("Password cannot be empty!");
     }
   }
 

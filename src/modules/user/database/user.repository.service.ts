@@ -15,10 +15,10 @@ export class UserRepository
 {
   constructor(
     @InjectModel(UserMongoEntity.name)
-    private userModel: Model<UserMongoEntity>,
+    private UserModel: Model<UserMongoEntity>,
   ) {
     super(
-      userModel,
+      UserModel,
       new UserMongoMapper(UserEntity, UserMongoEntity),
       UserIgnore,
     );
