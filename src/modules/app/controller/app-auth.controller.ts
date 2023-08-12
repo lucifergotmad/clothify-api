@@ -15,6 +15,8 @@ import { IdResponseDTO } from "src/interface-adapter/dtos/id.response.dto";
 import { AuthLoginResponseDTO } from "./dtos/auth-login.response.dto";
 import { HttpStatus } from "src/core/constants/error/status-code.const";
 import { AuthRefreshTokenRequestDTO } from "./dtos/auth-refresh-token.dto";
+import { RegisterMember } from "src/modules/member/use-cases/register-member.use-case";
+import { AuthRegisterMemberRequestDTO } from "./dtos/auth-register-member-request.dto";
 
 @Controller("v1")
 @ApiTags("App Authentication")
@@ -22,7 +24,15 @@ export class AppController {
   constructor(
     private authService: AuthService,
     private createUser: RegisterUser,
+    private createMember: RegisterMember,
   ) {}
+
+  @Post("auth/register/member")
+  @ApiCreatedResponse({ type: IdResponseDTO })
+  @ApiConflictResponse({ description: "Data already exists" })
+  async registerMember(@Body() body: AuthRegisterMemberRequestDTO) {
+    return await this.createMember.execute(body);
+  }
 
   @Post("auth/register")
   @ApiCreatedResponse({ type: IdResponseDTO })

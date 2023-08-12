@@ -7,9 +7,11 @@ import { JwtModule } from "@nestjs/jwt";
 import { EnvService } from "../configs/env.service";
 import { EnvModule } from "../configs/env.module";
 import { JwtStrategy } from "./jwt.strategy";
+import { MemberRepositoryModule } from "src/modules/member/database/member.repository.module";
 
 @Module({
   imports: [
+    MemberRepositoryModule,
     UserRepositoryModule,
     PassportModule,
     EnvModule,

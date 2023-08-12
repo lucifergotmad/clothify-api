@@ -16,11 +16,11 @@ import { UpdateUser } from "src/modules/user/use-cases/update-user.use-case";
 import { UserMongoEntity } from "../database/model/user.mongo-entity";
 import { UserRepository } from "../database/user.repository.service";
 import { FindUserById } from "../use-cases/find-user-by-id.use-case";
-import { CreateUserRequestDTO } from "./dtos/create-user.request.dto";
 import { UpdateUserRequestDTO } from "./dtos/update-user.request.dto";
 import { UserReponseDTO } from "./dtos/user.reponse.dto";
 import { SecurePost } from "src/core/decorators/controller-decorators/class-decorators/secure-post.decorator";
 import { RegisterUser } from "../use-cases/register-user.use-case";
+import { CreateUserRequestDTO } from "./dtos/create-user.request.dto";
 
 @ControllerProperty("v1/users", "[Master] Users")
 export class UsersController {

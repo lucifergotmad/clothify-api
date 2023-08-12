@@ -45,7 +45,7 @@ export class RegisterUser
           level: user.level,
         });
 
-        result = await this.userRepository.save(userEntity);
+        result = await this.userRepository.save(userEntity, session);
       });
 
       return new IdResponseDTO(result._id);

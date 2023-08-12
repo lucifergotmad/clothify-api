@@ -26,7 +26,7 @@ export class DeleteUser
     let result: IRepositoryResponse;
     try {
       await session.withTransaction(async () => {
-        result = await this.userRepository.delete({ _id: id });
+        result = await this.userRepository.delete({ _id: id }, session);
       });
 
       return new MessageResponseDTO(`${result.n} documents deleted!`);

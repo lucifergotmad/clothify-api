@@ -10,10 +10,12 @@ import { AuthRefreshTokenRequestDTO } from "src/modules/app/controller/dtos/auth
 import { ExceptionUnauthorize } from "src/core/exceptions/unauthorize.exception";
 import { ResponseException } from "src/core/exceptions/response.http-exception";
 import { AuthLoginRequestDTO } from "src/modules/app/controller/dtos/auth-login.dto";
+import { MemberRepository } from "src/modules/member/database/member.repository.service";
 
 @Injectable()
 export class AuthService {
   constructor(
+    private memberRepository: MemberRepository,
     private userRepository: UserRepository,
     private jwtService: JwtService,
     private envService: EnvService,
@@ -22,8 +24,9 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.userRepository.findOne({ username });
+    const member = await this.memberRepository.findOne({ username });
 
-    if (user) {
+    if (user || member) {
       const passwordMatch = await this.utils.hash.compare(
         password,
         user.password,
