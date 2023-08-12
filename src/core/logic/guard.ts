@@ -29,10 +29,14 @@ export class Guard {
     return false;
   }
 
-  static isEmail(value: string) {
-    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+  static isInvalidEmail(value: string) {
+    return !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
       value,
     );
+  }
+
+  static isInvalidPassword(value: string) {
+    return !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value);
   }
 
   static isDuplicate(value: any[]): boolean {
