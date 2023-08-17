@@ -14,7 +14,7 @@ export class Level extends ValueObject<string> {
 
   protected validate({ value }: DomainPrimitive<string>): void {
     if (Guard.isInvalidLevel(value)) {
-      throw new UnprocessableEntityException("Level user tidak valid!");
+      throw new UnprocessableEntityException("Level User not valid!");
     }
   }
 }
