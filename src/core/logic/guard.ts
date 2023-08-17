@@ -1,3 +1,5 @@
+import { AddressTitle } from "../constants/app/user/address-title.const";
+import { AddressType } from "../constants/app/user/address-type.const";
 import { UserLevel } from "../constants/app/user/user-level.const";
 
 export class Guard {
@@ -57,5 +59,13 @@ export class Guard {
 
   static isInvalidLevel(value: string): boolean {
     return !Object.values(UserLevel).includes(value as UserLevel);
+  }
+
+  static isInvalidAddressTitle(value: string): boolean {
+    return !Object.values(AddressTitle).includes(value as AddressTitle);
+  }
+
+  static isInvalidAddressType(value: string): boolean {
+    return !Object.values(AddressType).includes(value as AddressType);
   }
 }
