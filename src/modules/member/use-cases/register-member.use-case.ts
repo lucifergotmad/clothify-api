@@ -39,11 +39,13 @@ export class RegisterMember
         await this.memberRepository.findOneAndThrow(
           { email: payload.email },
           "Email already used!",
+          session,
         );
 
         await this.memberRepository.findOneAndThrow(
           { username: payload.username },
           "Username already used!",
+          session,
         );
 
         const memberEntity = await MemberEntity.create({

@@ -38,6 +38,7 @@ export class RegisterUser
         await this.userRepository.findOneAndThrow(
           { username: user.username },
           "Username are already use!",
+          session,
         );
 
         const userEntity = await UserEntity.create({

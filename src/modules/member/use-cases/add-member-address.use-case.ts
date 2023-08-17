@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/core/base-classes/infra/use-case.base";
 import { IUseCase } from "src/core/base-classes/interfaces/use-case.interface";
 import { AddMemberAddressRequestDTO } from "../controller/dtos/add-member-address.request.dto";
-import { MessageResponseDTO } from "src/interface-adapter/dtos/message.response.dto";
 import { InjectMemberAddressRepository } from "src/modules/member-address/database/member-address.repository.provider";
 import { MemberAddressRepositoryPort } from "src/modules/member-address/database/member-address.repository.port";
 import { Utils } from "src/core/utils/utils.service";
@@ -11,15 +10,14 @@ import { MemberRepositoryPort } from "../database/member.repository.port";
 import { ResponseException } from "src/core/exceptions/response.http-exception";
 import { MemberIdRequestDTO } from "../controller/dtos/member-id.request.dto";
 import { MemberAddressEntity } from "src/modules/member-address/domain/member-address.entity";
+import { IRepositoryResponse } from "src/core/ports/interfaces/repository-response.interface";
+import { IdResponseDTO } from "src/interface-adapter/dtos/id.response.dto";
 
 @Injectable()
 export class AddMemberAddress
   extends BaseUseCase
   implements
-    IUseCase<
-      AddMemberAddressRequestDTO & MemberIdRequestDTO,
-      MessageResponseDTO
-    >
+    IUseCase<AddMemberAddressRequestDTO & MemberIdRequestDTO, IdResponseDTO>
 {
   constructor(
     @InjectMemberAddressRepository
@@ -34,21 +32,22 @@ export class AddMemberAddress
   async execute({
     member_id,
     ...payload
-  }: AddMemberAddressRequestDTO &
-    MemberIdRequestDTO): Promise<MessageResponseDTO> {
+  }: AddMemberAddressRequestDTO & MemberIdRequestDTO): Promise<IdResponseDTO> {
     const session = await this.utils.transaction.startTransaction();
+    let result: IRepositoryResponse;
 
     try {
       await session.withTransaction(async () => {
-        console.log(member_id);
         await this.memberRepositry.findOneOrThrow(
           { member_id },
           "Member cannot be found!",
+          session,
         );
 
         await this.memberAddressRepository.findOneAndThrow(
           { member_id, title: payload.title },
           "Address with that title is already created!",
+          session,
         );
 
         const memberAddressEntity = MemberAddressEntity.create({
@@ -63,9 +62,12 @@ export class AddMemberAddress
           type: payload.type,
         });
 
-        await this.memberAddressRepository.save(memberAddressEntity);
+        result = await this.memberAddressRepository.save(
+          memberAddressEntity,
+          session,
+        );
       });
-      return new MessageResponseDTO("Success!");
+      return new IdResponseDTO(result._id);
     } catch (error) {
       throw new ResponseException(error.message, error.status, error.trace);
     } finally {
