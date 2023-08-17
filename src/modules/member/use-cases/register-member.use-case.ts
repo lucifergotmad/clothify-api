@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/core/base-classes/infra/use-case.base";
 import { IUseCase } from "src/core/base-classes/interfaces/use-case.interface";
-import { RegisterMemberRequestDTO } from "../controller/dtos/register-member-request.dto";
 import { MessageResponseDTO } from "src/interface-adapter/dtos/message.response.dto";
 import { InjectMemberRepository } from "../database/member.repository.provider";
 import { MemberRepositoryPort } from "../database/member.repository.port";
@@ -9,11 +8,12 @@ import { ResponseException } from "src/core/exceptions/response.http-exception";
 import { Utils } from "src/core/utils/utils.service";
 import { MemberEntity } from "../domain/member.entity";
 import { Guard } from "src/core/logic/guard";
+import { AuthRegisterMemberRequestDTO } from "src/modules/app/controller/dtos/auth-register-member-request.dto";
 
 @Injectable()
 export class RegisterMember
   extends BaseUseCase
-  implements IUseCase<RegisterMemberRequestDTO, MessageResponseDTO>
+  implements IUseCase<AuthRegisterMemberRequestDTO, MessageResponseDTO>
 {
   constructor(
     @InjectMemberRepository
@@ -24,7 +24,7 @@ export class RegisterMember
   }
 
   async execute(
-    payload: RegisterMemberRequestDTO,
+    payload: AuthRegisterMemberRequestDTO,
   ): Promise<MessageResponseDTO> {
     const session = await this.utils.transaction.startTransaction();
 
@@ -47,7 +47,7 @@ export class RegisterMember
         );
 
         const memberEntity = await MemberEntity.create({
-          member_id: "",
+          member_id: await this._generateMemberId(),
           email: payload.email,
           fullname: payload.fullname,
           username: payload.username,
@@ -64,5 +64,25 @@ export class RegisterMember
     } finally {
       session.endSession();
     }
+  }
+
+  private async _generateMemberId() {
+    let memberId: string;
+
+    const latestMember = await this.memberRepository.findOneLatest({});
+
+    if (!latestMember) {
+      memberId = "CL00000001";
+    } else {
+      memberId =
+        latestMember.member_id.substring(0, 3) +
+        String(
+          Number(
+            latestMember.member_id.slice(3, latestMember.member_id.length),
+          ) + 1,
+        ).padStart(7, "0");
+    }
+
+    return memberId;
   }
 }

@@ -1,4 +1,8 @@
 import { Provider } from "@nestjs/common";
 import { RegisterMember } from "./register-member.use-case";
+import { AddMemberAddress } from "./add-member-address.use-case";
 
-export const memberUseCaseProvider: Provider[] = [RegisterMember];
+export const memberUseCaseProvider: Provider[] = [
+  RegisterMember,
+  AddMemberAddress,
+];

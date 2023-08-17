@@ -6,6 +6,7 @@ import { MemberMongoEntity } from "./model/member.mongo-entity";
 import { MemberEntity } from "../domain/member.entity";
 import { MemberRepositoryPort } from "./member.repository.port";
 import { MemberMongoMapper } from "./model/member.mongo-mapper";
+import { MemberIgnore } from "src/core/constants/encryption/encryption-ignore";
 
 @Injectable()
 export class MemberRepository
@@ -16,7 +17,11 @@ export class MemberRepository
     @InjectModel(MemberMongoEntity.name)
     private MemberModel: Model<MemberMongoEntity>,
   ) {
-    super(MemberModel, new MemberMongoMapper(MemberEntity, MemberMongoEntity));
+    super(
+      MemberModel,
+      new MemberMongoMapper(MemberEntity, MemberMongoEntity),
+      MemberIgnore,
+    );
   }
 
   // fill me with beautiful method!
