@@ -8,6 +8,9 @@ export class AuthLoginResponseDTO implements IAuthLoginResponse {
     this.refreshToken = props.refreshToken;
     this.username = props.username;
     this.level = props.level;
+    this.fullname = props.fullname;
+    this.email = props.email;
+    this.phone_number = props.phone_number;
   }
   @ApiProperty({ example: "23498sdf98234-23498ydsf-23823h-sd8f324" })
   accessToken: string;
@@ -20,4 +23,13 @@ export class AuthLoginResponseDTO implements IAuthLoginResponse {
 
   @ApiProperty({ enum: UserLevel, example: UserLevel.Owner })
   level?: string;
+
+  @ApiProperty({ example: "Octyo Paswa Putra" })
+  fullname?: string;
+
+  @ApiProperty({ example: "lucifergotmad@gmail.com" })
+  email?: string;
+
+  @ApiProperty({ example: "081321832034" })
+  phone_number?: string;
 }

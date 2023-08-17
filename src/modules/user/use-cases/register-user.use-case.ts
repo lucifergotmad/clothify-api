@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/core/base-classes/infra/use-case.base";
 import { Utils } from "src/core/utils/utils.service";
-import { AuthRegisterRequestDTO } from "src/modules/app/controller/dtos/auth-register.dto";
+import { AuthRegisterUserRequestDTO } from "src/modules/app/controller/dtos/auth-register-user.dto";
 import { IdResponseDTO } from "src/interface-adapter/dtos/id.response.dto";
 import { UserRepositoryPort } from "../database/user.repository.port";
 import { InjectUserRepository } from "../database/user.repository.provider";
@@ -14,7 +14,7 @@ import { UserLevel } from "src/core/constants/app/user/user-level.const";
 @Injectable()
 export class RegisterUser
   extends BaseUseCase
-  implements IUseCase<AuthRegisterRequestDTO, IdResponseDTO>
+  implements IUseCase<AuthRegisterUserRequestDTO, IdResponseDTO>
 {
   constructor(
     @InjectUserRepository private userRepository: UserRepositoryPort,
@@ -23,7 +23,9 @@ export class RegisterUser
     super();
   }
 
-  public async execute(user: AuthRegisterRequestDTO): Promise<IdResponseDTO> {
+  public async execute(
+    user: AuthRegisterUserRequestDTO,
+  ): Promise<IdResponseDTO> {
     const session = await this.utils.transaction.startTransaction();
     let result: IRepositoryResponse;
 

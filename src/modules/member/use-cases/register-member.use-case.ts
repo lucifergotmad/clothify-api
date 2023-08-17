@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/core/base-classes/infra/use-case.base";
 import { IUseCase } from "src/core/base-classes/interfaces/use-case.interface";
-import { MessageResponseDTO } from "src/interface-adapter/dtos/message.response.dto";
 import { InjectMemberRepository } from "../database/member.repository.provider";
 import { MemberRepositoryPort } from "../database/member.repository.port";
 import { ResponseException } from "src/core/exceptions/response.http-exception";
@@ -9,11 +8,13 @@ import { Utils } from "src/core/utils/utils.service";
 import { MemberEntity } from "../domain/member.entity";
 import { Guard } from "src/core/logic/guard";
 import { AuthRegisterMemberRequestDTO } from "src/modules/app/controller/dtos/auth-register-member-request.dto";
+import { IdResponseDTO } from "src/interface-adapter/dtos/id.response.dto";
+import { IRepositoryResponse } from "src/core/ports/interfaces/repository-response.interface";
 
 @Injectable()
 export class RegisterMember
   extends BaseUseCase
-  implements IUseCase<AuthRegisterMemberRequestDTO, MessageResponseDTO>
+  implements IUseCase<AuthRegisterMemberRequestDTO, IdResponseDTO>
 {
   constructor(
     @InjectMemberRepository
@@ -23,10 +24,9 @@ export class RegisterMember
     super();
   }
 
-  async execute(
-    payload: AuthRegisterMemberRequestDTO,
-  ): Promise<MessageResponseDTO> {
+  async execute(payload: AuthRegisterMemberRequestDTO): Promise<IdResponseDTO> {
     const session = await this.utils.transaction.startTransaction();
+    let result: IRepositoryResponse;
 
     try {
       await session.withTransaction(async () => {
@@ -56,9 +56,10 @@ export class RegisterMember
           point: 0,
         });
 
-        await this.memberRepository.save(memberEntity, session);
+        result = await this.memberRepository.save(memberEntity, session);
       });
-      return new MessageResponseDTO("Berhasil!");
+
+      return new IdResponseDTO(result._id);
     } catch (error) {
       throw new ResponseException(error.message, error.status, error.trace);
     } finally {

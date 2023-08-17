@@ -9,7 +9,7 @@ import { EnvService } from "../configs/env.service";
 import { AuthRefreshTokenRequestDTO } from "src/modules/app/controller/dtos/auth-refresh-token.dto";
 import { ExceptionUnauthorize } from "src/core/exceptions/unauthorize.exception";
 import { ResponseException } from "src/core/exceptions/response.http-exception";
-import { AuthLoginRequestDTO } from "src/modules/app/controller/dtos/auth-login.dto";
+import { AuthLoginRequestDTO } from "src/modules/app/controller/dtos/auth-login.request.dto";
 import { MemberRepository } from "src/modules/member/database/member.repository.service";
 import { MemberMongoEntity } from "src/modules/member/database/model/member.mongo-entity";
 
@@ -70,8 +70,11 @@ export class AuthService {
       return new AuthLoginResponseDTO({
         accessToken,
         refreshToken,
-        username: user ? user.username : member.username,
+        username: user?.username ?? member?.username,
         level: user?.level,
+        fullname: member?.fullname,
+        email: member?.email,
+        phone_number: member?.phone_number,
       });
     } catch (error) {
       throw new ResponseException(error.response, error.status, error.trace);
