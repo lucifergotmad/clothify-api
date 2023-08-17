@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/core/base-classes/infra/use-case.base";
 import { IUseCase } from "src/core/base-classes/interfaces/use-case.interface";
 import { AddMemberAddressRequestDTO } from "../controller/dtos/add-member-address.request.dto";
@@ -50,6 +50,14 @@ export class AddMemberAddress
           session,
         );
 
+        const memberAddress = await this.memberAddressRepository.findBy({
+          member_id,
+        });
+
+        if (memberAddress.length > 5) {
+          throw new BadRequestException("Cannot add more than 5 address!");
+        }
+
         const memberAddressEntity = MemberAddressEntity.create({
           member_id,
           city_id: payload.city_id,
@@ -67,6 +75,7 @@ export class AddMemberAddress
           session,
         );
       });
+
       return new IdResponseDTO(result._id);
     } catch (error) {
       throw new ResponseException(error.message, error.status, error.trace);
