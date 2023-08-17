@@ -19,5 +19,5 @@ export class AuthLoginResponseDTO implements IAuthLoginResponse {
   username: string;
 
   @ApiProperty({ enum: UserLevel, example: UserLevel.Owner })
-  level: string;
+  level?: string;
 }

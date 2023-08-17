@@ -11,6 +11,7 @@ import { ExceptionUnauthorize } from "src/core/exceptions/unauthorize.exception"
 import { ResponseException } from "src/core/exceptions/response.http-exception";
 import { AuthLoginRequestDTO } from "src/modules/app/controller/dtos/auth-login.dto";
 import { MemberRepository } from "src/modules/member/database/member.repository.service";
+import { MemberMongoEntity } from "src/modules/member/database/model/member.mongo-entity";
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({ username });
     const member = await this.memberRepository.findOne({ username });
 
-    if (user || member) {
+    if (user) {
       const passwordMatch = await this.utils.hash.compare(
         password,
         user.password,
@@ -35,6 +36,18 @@ export class AuthService {
       if (passwordMatch) {
         delete user.password;
         return user;
+      }
+    }
+
+    if (member) {
+      const passwordMatch = await this.utils.hash.compare(
+        password,
+        member.password,
+      );
+
+      if (passwordMatch) {
+        delete member.password;
+        return member;
       }
     }
     return null;
@@ -46,13 +59,19 @@ export class AuthService {
         username: body.username,
       });
 
-      const { accessToken, refreshToken } = await this.registerToken(user);
+      const member = await this.memberRepository.findOne({
+        username: body.username,
+      });
+
+      const { accessToken, refreshToken } = await this.registerToken(
+        user ?? member,
+      );
 
       return new AuthLoginResponseDTO({
         accessToken,
         refreshToken,
-        username: user.username,
-        level: user.level,
+        username: user ? user.username : member.username,
+        level: user?.level,
       });
     } catch (error) {
       throw new ResponseException(error.response, error.status, error.trace);
@@ -65,7 +84,7 @@ export class AuthService {
     return new MessageResponseDTO("Berhasil Logout");
   }
 
-  async registerToken(user: Partial<UserMongoEntity>) {
+  async registerToken(user: Partial<UserMongoEntity | MemberMongoEntity>) {
     const payload = { sub: user.username };
     const token = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, {
