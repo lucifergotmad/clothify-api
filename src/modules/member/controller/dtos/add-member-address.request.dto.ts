@@ -24,6 +24,6 @@ export class AddMemberAddressRequestDTO {
   @IsRequiredString({ example: AddressTitle.Home })
   title: string;
 
-  @IsRequiredString({ example: "Jl. Pembangunan No. 10 RT. 02 RW 03" })
+  @IsRequiredString({ example: "Jl. Pembangunan No. 10 RT. 02 RW. 03" })
   description: string;
 }

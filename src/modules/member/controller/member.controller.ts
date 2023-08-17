@@ -16,12 +16,16 @@ import { IdResponseDTO } from "src/interface-adapter/dtos/id.response.dto";
 import { UpdateMemberAddress } from "../use-cases/update-member-address.use-case";
 import { UpdateMemberAddressRequestDTO } from "./dtos/update-member-address.request.dto";
 import { IId } from "src/interface-adapter/interfaces/id.interface";
+import { SecureGet } from "src/core/decorators/controller-decorators/class-decorators/secure-get.decorator";
+import { MemberAddressResponseDTO } from "./dtos/member-address.response.dto";
+import { GetMemberAddress } from "../use-cases/get-member-address.use-case";
 
 @ControllerProperty("v1/members", "[Master] Members")
 export class MemberController {
   constructor(
     private readonly addMemberAddress: AddMemberAddress,
     private readonly updateMemberAddress: UpdateMemberAddress,
+    private readonly getMemberAddress: GetMemberAddress,
   ) {}
 
   @SecurePost("address/:member_id")
@@ -42,8 +46,14 @@ export class MemberController {
   @ApiBadRequestResponse({ description: "Bad Request (ID not valid)" })
   updateAddress(
     @Body() body: UpdateMemberAddressRequestDTO,
-    @Param() param: IId,
+    @Param() params: IId,
   ) {
-    return this.updateMemberAddress.execute({ ...body, ...param });
+    return this.updateMemberAddress.execute({ ...body, ...params });
+  }
+
+  @SecureGet("address/:member_id")
+  @ApiOkResponse({ type: MemberAddressResponseDTO })
+  getAddress(@Param() params: MemberIdRequestDTO) {
+    return this.getMemberAddress.execute(params);
   }
 }
